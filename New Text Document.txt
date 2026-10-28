@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="si" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ඊ-ඉගෙනුම | ශ්‍රී ලංකා පාසල් අතීත ප්‍රශ්න පත්‍ර සහ පෙළපොත් මධ්‍යස්ථානය</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                        },
+                        accent: {
+                            400: '#f43f5e',
+                            500: '#e11d48',
+                            600: '#be123c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans Sinhala', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Sinhala:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Noto Sans Sinhala', 'Inter', sans-serif;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f43f5e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #d946ef 100%);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- HEADER & NAVIGATION -->
+    <header class="sticky top-0 z-40 w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 sm:h-20 gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl gradient-bg flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <i class="fa-solid fa-graduation-cap text-xl sm:text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <span class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2">
+                            ඊ-ඉගෙනුම <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 font-semibold">PRO</span>
+                        </span>
+                        <p class="text-xs text-slate-400 hidden sm:block">ශ්‍රී ලංකා පාසල් අධ්‍යාපන මෙහෙයුම් මධ්‍යස්ථානය</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Search Bar -->
+                <div class="hidden md:flex flex-1 max-w-md mx-4 relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="globalSearchInput" onkeyup="handleGlobalSearch()" 
+                        placeholder="ප්‍රශ්න පත්‍ර, පෙළපොත් හෝ විෂයන් සූක්ෂමව සොයන්න..." 
+                        class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden lg:flex items-center gap-1 font-medium text-sm">
+                    <button onclick="switchTab('home')" id="nav-home" class="nav-btn px-4 py-2 rounded-xl text-indigo-400 bg-indigo-500/10 transition-all">මුල් පිටුව</button>
+                    <button onclick="switchTab('papers')" id="nav-papers" class="nav-btn px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900 transition-all">ප්‍රශ්න පත්‍ර</button>
+                    <button onclick="switchTab('textbooks')" id="nav-textbooks" class="nav-btn px-4 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-900 transition-all">අච්චු පොත්</button>
+                    <button onclick="switchTab('quiz')" id="nav-quiz" class="nav-btn px-4 py-2 rounded-xl text-amber-400 hover:bg-amber-500/10 transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-bolt text-amber-400"></i> MCQs පුහුණුව
+                    </button>
+                </nav>
+
+                <!-- Action Button & Mobile Menu Toggle -->
+                <div class="flex items-center gap-3">
+                    <button onclick="openUploadModal()" class="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 rounded-xl transition-all shadow-lg shadow-indigo-600/25 active:scale-95">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>එකතු කරන්න</span>
+                    </button>
+
+                    <!-- Mobile Menu Button -->
+                    <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="lg:hidden p-2 text-slate-400 hover:text-white rounded-xl bg-slate-900 border border-slate-800">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-800 bg-slate-950 px-4 py-4 space-y-3">
+            <div class="relative mb-3">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" onkeyup="handleGlobalSearch()" placeholder="සොයන්න..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-sm text-slate-200">
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="switchTab('home'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-xl bg-slate-900 text-slate-200 font-medium">මුල් පිටුව</button>
+                <button onclick="switchTab('papers'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-xl bg-slate-900 text-slate-200 font-medium">ප්‍රශ්න පත්‍ර</button>
+                <button onclick="switchTab('textbooks'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-xl bg-slate-900 text-slate-200 font-medium">අච්චු පොත්</button>
+                <button onclick="switchTab('quiz'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-xl bg-amber-500/10 text-amber-400 font-medium border border-amber-500/20">MCQ Quiz</button>
+            </div>
+            <button onclick="openUploadModal(); toggleMobileMenu();" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <span>ප්‍රශ්න පත්‍රයක් Upload කරන්න</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+        <!-- ================= HOME TAB / HERO SECTION ================= -->
+        <section id="tab-home" class="tab-content space-y-12">
+            
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900/50 p-6 sm:p-12 lg:p-16">
+                <!-- Background decorative glow -->
+                <div class="absolute -top-24 -right-24 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-fuchsia-600/20 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-3xl space-y-6">
+                    <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-xs sm:text-sm font-medium">
+                        <i class="fa-solid fa-sparkles"></i> 2026 සමස්ත ලංකා අධ්‍යයන ද්වාරය
+                    </span>
+
+                    <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+                        ඔබේ විභාග ජයග්‍රහණයට <br>
+                        <span class="gradient-text">සුපිරිම ඉගෙනුම් පියස.</span>
+                    </h1>
+
+                    <p class="text-slate-300 text-sm sm:text-base lg:text-lg font-light leading-relaxed">
+                        1 ශ්‍රේණියේ සිට 13 ශ්‍රේණිය දක්වා සියලුම රජයේ අච්චු පොත්, පසුගිය විභාග ප්‍රශ්න පත්‍ර (Past Papers), ලකුණු දීමේ පටිපාටි (Marking Schemes) සහ ස්වයංක්‍රීය MCQ ප්‍රශ්න පුහුණු පද්ධතිය එකම තැනකින්!
+                    </p>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-wrap items-center gap-4 pt-2">
+                        <button onclick="switchTab('papers')" class="px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-all shadow-lg shadow-indigo-600/30 flex items-center gap-2 active:scale-95">
+                            <i class="fa-solid fa-file-lines"></i>
+                            <span>Past Papers බලන්න</span>
+                        </button>
+                        <button onclick="switchTab('textbooks')" class="px-6 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm transition-all border border-slate-700 flex items-center gap-2 active:scale-95">
+                            <i class="fa-solid fa-book"></i>
+                            <span>අච්චු පොත් ගන්න</span>
+                        </button>
+                        <button onclick="switchTab('quiz')" class="px-6 py-3.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2 active:scale-95">
+                            <i class="fa-solid fa-gamepad"></i>
+                            <span>MCQ ප්‍රශ්න ලියන්න</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Counter -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-12 pt-8 border-t border-slate-800">
+                    <div class="p-4 rounded-2xl bg-slate-950/40 border border-slate-800/80">
+                        <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400">1,200+</div>
+                        <div class="text-xs sm:text-sm text-slate-400 font-medium">අතීත ප්‍රශ්න පත්‍ර</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-950/40 border border-slate-800/80">
+                        <div class="text-2xl sm:text-3xl font-extrabold text-indigo-400">100%</div>
+                        <div class="text-xs sm:text-sm text-slate-400 font-medium">රජයේ අච්චු පොත්</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-950/40 border border-slate-800/80">
+                        <div class="text-2xl sm:text-3xl font-extrabold text-amber-400">500+</div>
+                        <div class="text-xs sm:text-sm text-slate-400 font-medium">MCQ ප්‍රශ්න</div>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-950/40 border border-slate-800/80">
+                        <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400">නොමිලේ</div>
+                        <div class="text-xs sm:text-sm text-slate-400 font-medium">සියලුම සේවාවන්</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRADE SELECTOR (1 - 13 Grade Filters) -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">ශ්‍රේණිය තෝරන්න (Select Grade)</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">ඔබට අදාළ ශ්‍රේණිය මත Click කර අදාළ ද්‍රව්‍ය සෘජුවම ලබාගන්න</p>
+                    </div>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <button onclick="filterGradeCategory('primary')" class="grade-cat-btn p-4 rounded-2xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-left transition-all hover:border-indigo-500/50 group">
+                        <div class="w-10 h-10 rounded-xl bg-pink-500/10 border border-pink-500/20 text-pink-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-shapes"></i>
+                        </div>
+                        <div class="font-bold text-white">ප්‍රාථමික අංශය</div>
+                        <div class="text-xs text-slate-400">1 - 5 ශ්‍රේණි (ශිෂ්‍යත්වය)</div>
+                    </button>
+
+                    <button onclick="filterGradeCategory('junior')" class="grade-cat-btn p-4 rounded-2xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-left transition-all hover:border-indigo-500/50 group">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-book-open-reader"></i>
+                        </div>
+                        <div class="font-bold text-white">කණිෂ්ඨ ද්විතියික</div>
+                        <div class="text-xs text-slate-400">6 - 9 ශ්‍රේණි</div>
+                    </button>
+
+                    <button onclick="filterGradeCategory('ol')" class="grade-cat-btn p-4 rounded-2xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-left transition-all hover:border-indigo-500/50 group">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-award"></i>
+                        </div>
+                        <div class="font-bold text-white">සාමාන්‍ය පෙළ (O/L)</div>
+                        <div class="text-xs text-slate-400">10 - 11 ශ්‍රේණි</div>
+                    </button>
+
+                    <button onclick="filterGradeCategory('al')" class="grade-cat-btn p-4 rounded-2xl border border-slate-800 bg-slate-900/60 hover:bg-slate-800/80 text-left transition-all hover:border-indigo-500/50 group">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                        <div class="font-bold text-white">උසස් පෙළ (A/L)</div>
+                        <div class="text-xs text-slate-400">12 - 13 ශ්‍රේණි</div>
+                    </button>
+                </div>
+
+                <!-- Individual Grade Pills (1 to 13) -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 pt-2 scrollbar-none" id="gradePillsContainer">
+                    <!-- Populated dynamically via JS -->
+                </div>
+            </div>
+
+            <!-- FEATURED PAST PAPERS QUICK VIEW -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">ජනප්‍රිය අතීත ප්‍රශ්න පත්‍ර (Featured Past Papers)</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">නිතරම සිසුන් පාවිච්චි කරන ලද ප්‍රධාන විභාග ප්‍රශ්න පත්‍ර</p>
+                    </div>
+                    <button onclick="switchTab('papers')" class="text-xs sm:text-sm font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                        සියල්ල බලන්න <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div id="homePapersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- FEATURED TEXTBOOKS -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-bold text-white">ප්‍රධාන රජයේ පෙළපොත් (Government Textbooks)</h2>
+                        <p class="text-xs sm:text-sm text-slate-400">අධ්‍යාපන ප්‍රකාශන දෙපාර්තමේන්තුවේ නිල අච්චු පොත්</p>
+                    </div>
+                    <button onclick="switchTab('textbooks')" class="text-xs sm:text-sm font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                        සියල්ල බලන්න <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <div id="homeTextbooksGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= PAST PAPERS TAB ================= -->
+        <section id="tab-papers" class="tab-content hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white">අතීත ප්‍රශ්න පත්‍ර සහ ලකුණු දීමේ පටිපාටි</h1>
+                    <p class="text-slate-400 text-sm">ශිෂ්‍යත්වය, සාමාන්‍ය පෙළ සහ උසස් පෙළ පසුගිය විභාග ප්‍රශ්න පත්‍ර PDF ලෙස ලබාගන්න</p>
+                </div>
+
+                <!-- Exam Category Filters -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
+                    <button onclick="filterPapersCategory('ALL')" class="paper-cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition-all">සියල්ල</button>
+                    <button onclick="filterPapersCategory('G5')" class="paper-cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-all">5 ශ්‍රේණිය ශිෂ්‍යත්වය</button>
+                    <button onclick="filterPapersCategory('OL')" class="paper-cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-all">අ.පො.ස. සාමාන්‍ය පෙළ (O/L)</button>
+                    <button onclick="filterPapersCategory('AL')" class="paper-cat-pill px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-white transition-all">අ.පො.ස. උසස් පෙළ (A/L)</button>
+                </div>
+            </div>
+
+            <!-- Subject Quick Filter -->
+            <div class="flex items-center gap-3 overflow-x-auto pb-2" id="subjectFilterBar">
+                <!-- Dynamic subject pills -->
+            </div>
+
+            <!-- Papers Grid -->
+            <div id="allPapersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Dynamic Papers Cards -->
+            </div>
+        </section>
+
+
+        <!-- ================= TEXTBOOKS TAB ================= -->
+        <section id="tab-textbooks" class="tab-content hidden space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white">රජයේ අච්චු පොත් (Government Textbooks)</h1>
+                    <p class="text-slate-400 text-sm">1 ශ්‍රේණියේ සිට 13 ශ්‍රේණිය දක්වා සිංහල, ඉංග්‍රීසි සහ දෙමළ මාධ්‍ය පෙළපොත්</p>
+                </div>
+
+                <!-- Medium Selector -->
+                <div class="flex items-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-800">
+                    <button onclick="filterMedium('sinhala')" id="btn-med-sinhala" class="medium-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 text-white transition-all">සිංහල මාධ්‍යය</button>
+                    <button onclick="filterMedium('english')" id="btn-med-english" class="medium-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-all">English Medium</button>
+                    <button onclick="filterMedium('tamil')" id="btn-med-tamil" class="medium-btn px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white transition-all">தமிழ்</button>
+                </div>
+            </div>
+
+            <!-- Grade Filter Selector inside Textbooks -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2" id="textbookGradeFilterBar">
+                <!-- JS populated grade filters -->
+            </div>
+
+            <!-- Textbooks Grid -->
+            <div id="allTextbooksGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-5">
+                <!-- JS Populated Textbooks -->
+            </div>
+        </section>
+
+
+        <!-- ================= MCQ QUIZ PRACTICE TAB (PRO OPTION) ================= -->
+        <section id="tab-quiz" class="tab-content hidden space-y-8">
+            <div class="p-6 sm:p-10 rounded-3xl border border-amber-500/30 bg-gradient-to-r from-amber-950/30 via-slate-900 to-slate-900 relative overflow-hidden">
+                <div class="max-w-2xl space-y-4">
+                    <span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold uppercase tracking-wider">
+                        ⚡ සුපිරි ඔප්ෂන් එක (Pro Practice Mode)
+                    </span>
+                    <h1 class="text-2xl sm:text-4xl font-extrabold text-white">ස්වයංක්‍රීය MCQ ප්‍රශ්න පත්‍ර පුහුණුව</h1>
+                    <p class="text-slate-300 text-sm">
+                        කාලගණකය (Timer) සහිතව සජීවීව ප්‍රශ්න වලට පිළිතුරු සපයා ඔබේ දැනුම මැන බලන්න. පිළිතුරු අවසානයේ ලකුණු සහ සියලුම පැහැදිලි කිරීම් ලබාගත හැක!
+                    </p>
+                </div>
+            </div>
+
+            <!-- Quiz Engine Interface -->
+            <div id="quizSelectionScreen" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Quiz Category Card 1 -->
+                <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-amber-500/50 transition-all space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl font-bold">
+                            01
+                        </div>
+                        <h3 class="text-lg font-bold text-white">5 ශ්‍රේණිය ශිෂ්‍යත්වය - MCQ පුහුණුව</h3>
+                        <p class="text-slate-400 text-xs">සාමාන්‍ය දැනුම, තර්කන ශක්තිය සහ භාෂා හැකියාව මැන බලන ප්‍රශ්න 5ක්.</p>
+                        <div class="flex items-center gap-3 text-xs text-slate-500 font-medium pt-2">
+                            <span><i class="fa-regular fa-clock"></i> විනාඩි 5</span>
+                            <span><i class="fa-regular fa-file-lines"></i> ප්‍රශ්න 5</span>
+                        </div>
+                    </div>
+                    <button onclick="startQuiz('g5')" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm transition-all shadow-lg shadow-amber-500/20">
+                        ප්‍රශ්න පත්‍රය ආරම්භ කරන්න
+                    </button>
+                </div>
+
+                <!-- Quiz Category Card 2 -->
+                <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-amber-500/50 transition-all space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xl font-bold">
+                            02
+                        </div>
+                        <h3 class="text-lg font-bold text-white">O/L විද්‍යාව (Science) - MCQ</h3>
+                        <p class="text-slate-400 text-xs">සමස්ත විද්‍යාව විෂය නිර්දේශයෙන් තෝරාගත් වැදගත් MCQ ප්‍රශ්න.</p>
+                        <div class="flex items-center gap-3 text-xs text-slate-500 font-medium pt-2">
+                            <span><i class="fa-regular fa-clock"></i> විනාඩි 8</span>
+                            <span><i class="fa-regular fa-file-lines"></i> ප්‍රශ්න 5</span>
+                        </div>
+                    </div>
+                    <button onclick="startQuiz('ol_science')" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-600/20">
+                        ප්‍රශ්න පත්‍රය ආරම්භ කරන්න
+                    </button>
+                </div>
+
+                <!-- Quiz Category Card 3 -->
+                <div class="p-6 rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-amber-500/50 transition-all space-y-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl font-bold">
+                            03
+                        </div>
+                        <h3 class="text-lg font-bold text-white">A/L තොරතුරු තාක්ෂණය (ICT) - MCQ</h3>
+                        <p class="text-slate-400 text-xs">A/L ICT ප්‍රධාන පාඩම් පදනම් කරගත් MCQ ප්‍රශ්න පත්‍රය.</p>
+                        <div class="flex items-center gap-3 text-xs text-slate-500 font-medium pt-2">
+                            <span><i class="fa-regular fa-clock"></i> විනාඩි 10</span>
+                            <span><i class="fa-regular fa-file-lines"></i> ප්‍රශ්න 5</span>
+                        </div>
+                    </div>
+                    <button onclick="startQuiz('al_ict')" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm transition-all shadow-lg shadow-emerald-600/20">
+                        ප්‍රශ්න පත්‍රය ආරම්භ කරන්න
+                    </button>
+                </div>
+            </div>
+
+            <!-- Active Quiz Box (Hidden by default) -->
+            <div id="activeQuizBox" class="hidden p-6 sm:p-8 rounded-3xl border border-slate-800 bg-slate-900 space-y-6">
+                <!-- Quiz Header -->
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div>
+                        <span id="quizTitle" class="text-xs font-bold text-amber-400 uppercase tracking-wider">MCQ Quiz</span>
+                        <h2 id="quizQuestionNum" class="text-xl font-bold text-white">ප්‍රශ්න අංක 1/5</h2>
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 font-mono text-amber-400 font-bold">
+                        <i class="fa-regular fa-clock"></i>
+                        <span id="quizTimer">05:00</span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div id="quizProgressBar" class="h-full bg-amber-500 transition-all duration-300" style="width: 20%;"></div>
+                </div>
+
+                <!-- Question Body -->
+                <div class="space-y-4 py-2">
+                    <h3 id="quizQuestionText" class="text-lg sm:text-xl font-semibold text-white leading-relaxed">
+                        -- ප්‍රශ්නය මෙතැනට පැමිණේ --
+                    </h3>
+
+                    <!-- Options Container -->
+                    <div id="quizOptionsContainer" class="space-y-3 pt-2">
+                        <!-- Options generated by JS -->
+                    </div>
+                </div>
+
+                <!-- Quiz Actions -->
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800">
+                    <button onclick="exitQuiz()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-400 hover:text-white text-xs font-semibold">
+                        අතහැර යන්න
+                    </button>
+                    <button id="nextQuestionBtn" onclick="nextQuestion()" disabled class="px-6 py-2.5 rounded-xl bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-indigo-500 text-white font-bold text-sm transition-all">
+                        ඊළඟ ප්‍රශ්නය <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Result View (Hidden by default) -->
+            <div id="quizResultBox" class="hidden p-8 sm:p-12 rounded-3xl border border-slate-800 bg-slate-900 text-center space-y-6">
+                <div class="w-20 h-20 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white">ප්‍රශ්න පත්‍රය අවසන්!</h2>
+                    <p class="text-slate-400 text-sm mt-1">ඔබ ලබාගත් අවසන් ලකුණු මට්ටම මෙන්න</p>
+                </div>
+
+                <div class="inline-block px-8 py-4 rounded-2xl bg-slate-950 border border-slate-800">
+                    <span id="finalScoreText" class="text-4xl font-extrabold text-amber-400">4 / 5</span>
+                    <p id="scorePercentage" class="text-xs text-slate-500 mt-1">ලකුණු ප්‍රතිශතය: 80%</p>
+                </div>
+
+                <div id="quizReviewContainer" class="text-left space-y-4 pt-4 border-t border-slate-800 max-w-2xl mx-auto">
+                    <!-- Explanations and Answers -->
+                </div>
+
+                <div class="pt-4 flex items-center justify-center gap-4">
+                    <button onclick="resetQuizScreen()" class="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm">
+                        තවත් ප්‍රශ්න පත්‍රයක් කරන්න
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+
+    <!-- PDF SIMULATOR VIEWER MODAL -->
+    <div id="pdfModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-4xl h-[85vh] rounded-3xl flex flex-col overflow-hidden shadow-2xl">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+                <div class="flex items-center gap-3">
+                    <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
+                    <div>
+                        <h3 id="pdfModalTitle" class="text-sm sm:text-base font-bold text-white">ප්‍රශ්න පත්‍ර පෙරදසුන</h3>
+                        <p id="pdfModalSubtitle" class="text-xs text-slate-400">ඊ-ඉගෙනුම Digital Document Reader</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="downloadSimulatedPDF()" class="px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i> Download PDF
+                    </button>
+                    <button onclick="closePdfModal()" class="p-2 text-slate-400 hover:text-white rounded-xl bg-slate-800">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- PDF Simulated Viewer Content -->
+            <div class="flex-grow p-6 overflow-y-auto bg-slate-950/50 flex flex-col items-center justify-center">
+                <div class="w-full max-w-2xl bg-white text-slate-900 p-8 sm:p-12 rounded-xl shadow-2xl space-y-6 min-h-[500px]">
+                    <div class="text-center border-b pb-4 border-slate-200">
+                        <span class="text-xs font-bold uppercase tracking-widest text-slate-500">ශ්‍රී ලංකා අධ්‍යාපන දෙපාර්තමේන්තුව</span>
+                        <h2 id="pdfDocHeader" class="text-xl font-bold text-slate-900 mt-1">2023 (2024) අ.පො.ස. සාමාන්‍ය පෙළ විභාගය</h2>
+                        <p id="pdfDocSubHeader" class="text-sm font-semibold text-slate-700">විද්‍යාව I , II (Science) - සිංහල මාධ්‍යය</p>
+                    </div>
+
+                    <div class="space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed font-sans">
+                        <div class="p-4 bg-slate-100 rounded-lg border border-slate-200">
+                            <strong>උපදෙස්:</strong> සියලුම ප්‍රශ්න වලට පිළිතුරු සපයන්න. පිළිතුරු පත්‍රයේ නියමිත ස්ථානයේ ඔබේ විභාග අංකය ලියන්න.
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <p class="font-bold">01. ශාක සෛලයක ප්ලාස්ම පටලයෙන් ඇතුළත පිහිටි ජෙලි වැනි ද්‍රව්‍යය කුමක්ද?</p>
+                            <div class="pl-4 space-y-1">
+                                <p>(1) සෛල ප්ලාස්මය</p>
+                                <p>(2) න්‍යෂ්ටිය</p>
+                                <p>(3) රයිබෙසෝම</p>
+                                <p>(4) මයිටොකොන්ඩ්‍රියා</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 pt-2">
+                            <p class="font-bold">02. පරමාණුවක න්‍යෂ්ටිය තුළ අඩංගු මූලික අංශු වන්නේ,</p>
+                            <div class="pl-4 space-y-1">
+                                <p>(1) ප්‍රෝටෝන සහ ඉලෙක්ට්‍රෝන පමණි.</p>
+                                <p>(2) ප්‍රෝටෝන සහ නියුට්‍රෝන පමණි.</p>
+                                <p>(3) නියුට්‍රෝන සහ ඉලෙක්ට්‍රෝන පමණි.</p>
+                                <p>(4) ප්‍රෝටෝන, නියුට්‍රෝන සහ ඉලෙක්ට්‍රෝන.</p>
+                            </div>
+                        </div>
+
+                        <div class="text-center text-slate-400 text-xs pt-12">
+                            --- නිල ප්‍රශ්න පත්‍ර පෙරදසුන (ඊ-ඉගෙනුම අධ්‍යාපන ජාලය) ---
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CUSTOM RESOURCE UPLOAD MODAL -->
+    <div id="uploadModal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 flex items-center justify-center">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white">ප්‍රශ්න පත්‍රයක් එකතු කරන්න</h3>
+                        <p class="text-xs text-slate-400">ඔබ සතු Past Papers හෝ Notes අප වෙත යොමු කරන්න</p>
+                    </div>
+                </div>
+                <button onclick="closeUploadModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="uploadForm" onsubmit="handleResourceUpload(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">මාතෘකාව (Title)</label>
+                    <input type="text" required id="upTitle" placeholder="උදා: 2023 O/L ගණිතය මොඩල් පේපර්" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:border-indigo-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">ශ්‍රේණිය (Grade)</label>
+                        <select id="upGrade" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-sm text-slate-200">
+                            <option value="11">Grade 11 (O/L)</option>
+                            <option value="13">Grade 13 (A/L)</option>
+                            <option value="5">Grade 5 (Scholarship)</option>
+                            <option value="10">Grade 10</option>
+                            <option value="9">Grade 9</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 mb-1">විෂය (Subject)</label>
+                        <input type="text" required id="upSubject" placeholder="උදා: විද්‍යාව / ගණිතය" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:border-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">PDF ගොනුව තෝරන්න (PDF File)</label>
+                    <input type="file" accept=".pdf" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-400 file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500">
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all shadow-lg shadow-indigo-600/30">
+                        Upload කර පද්ධතියට එකතු කරන්න
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-800 bg-slate-950 mt-16 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-xl gradient-bg flex items-center justify-center">
+                            <i class="fa-solid fa-graduation-cap text-white text-sm"></i>
+                        </div>
+                        <span class="text-lg font-bold text-white">ඊ-ඉගෙනුම</span>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        ශ්‍රී ලංකාවේ සියලුම පාසල් සිසුන් උදෙසා නොමිලේ ලබාදෙන අධ්‍යාපනික ප්‍රශ්න පත්‍ර සහ පෙළපොත් එකතුව.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-3">ඉක්මන් පිවිසුම්</h4>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li><a href="#" onclick="switchTab('papers')" class="hover:text-indigo-400">5 ශ්‍රේණිය ශිෂ්‍යත්වය</a></li>
+                        <li><a href="#" onclick="switchTab('papers')" class="hover:text-indigo-400">O/L අතීත ප්‍රශ්න පත්‍ර</a></li>
+                        <li><a href="#" onclick="switchTab('papers')" class="hover:text-indigo-400">A/L අතීත ප්‍රශ්න පත්‍ර</a></li>
+                        <li><a href="#" onclick="switchTab('textbooks')" class="hover:text-indigo-400">රජයේ අච්චු පොත්</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-3">විශේෂාංග</h4>
+                    <ul class="space-y-2 text-xs text-slate-400">
+                        <li><a href="#" onclick="switchTab('quiz')" class="hover:text-indigo-400">MCQ ප්‍රශ්න පත්‍ර පුහුණුව</a></li>
+                        <li><a href="#" onclick="openUploadModal()" class="hover:text-indigo-400">ප්‍රශ්න පත්‍ර Upload කරන්න</a></li>
+                        <li><a href="#" class="hover:text-indigo-400">ලකුණු දීමේ පටිපාටි (Marking Schemes)</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-3">සම්බන්ධ වන්න</h4>
+                    <div class="flex gap-3 text-slate-400">
+                        <a href="#" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:text-white hover:border-indigo-500"><i class="fa-brands fa-facebook-f text-xs"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:text-white hover:border-indigo-500"><i class="fa-brands fa-youtube text-xs"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-center hover:text-white hover:border-indigo-500"><i class="fa-brands fa-telegram text-xs"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-slate-800/60 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                <p>© 2026 ඊ-ඉගෙනුම (e-Igenuma Hub). All Rights Reserved.</p>
+                <p>Designed with <i class="fa-solid fa-heart text-red-500"></i> for Sri Lankan Students</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ================= DATABASE / DATA STORES ================= */
+        const samplePapers = [
+            { id: 1, title: '2023 (2024) O/L විද්‍යාව (Science) I & II', category: 'OL', grade: 11, subject: 'විද්‍යාව', year: 2023, hasMarking: true },
+            { id: 2, title: '2023 (2024) O/L සංයුක්ත ගණිතය (Mathematics)', category: 'OL', grade: 11, subject: 'ගණිතය', year: 2023, hasMarking: true },
+            { id: 3, title: '2023 A/L සංයුක්ත ගණිතය (Combined Maths)', category: 'AL', grade: 13, subject: 'ගණිතය', year: 2023, hasMarking: true },
+            { id: 4, title: '2023 A/L භෞතික විද්‍යාව (Physics) Past Paper', category: 'AL', grade: 13, subject: 'විද්‍යාව', year: 2023, hasMarking: true },
+            { id: 5, title: '2023 ශිෂ්‍යත්ව විභාගය - ප්‍රශ්න පත්‍රය (Grade 5)', category: 'G5', grade: 5, subject: 'ශිෂ්‍යත්වය', year: 2023, hasMarking: true },
+            { id: 6, title: '2022 O/L සිංහල භාෂාව හා සාහිත්‍යය', category: 'OL', grade: 11, subject: 'සිංහල', year: 2022, hasMarking: true },
+            { id: 7, title: '2022 O/L ඉංග්‍රීසි (English Language)', category: 'OL', grade: 11, subject: 'ඉංග්‍රීසි', year: 2022, hasMarking: true },
+            { id: 8, title: '2022 O/L ඉතිහාසය (History)', category: 'OL', grade: 11, subject: 'ඉතිහාසය', year: 2022, hasMarking: true },
+            { id: 9, title: '2023 A/L රසායන විද්‍යාව (Chemistry)', category: 'AL', grade: 13, subject: 'විද්‍යාව', year: 2023, hasMarking: true },
+            { id: 10, title: '2023 A/L ICT (තොරතුරු තාක්ෂණය)', category: 'AL', grade: 13, subject: 'ICT', year: 2023, hasMarking: true },
+        ];
+
+        const sampleTextbooks = [
+            { id: 1, title: '11 ශ්‍රේණිය - විද්‍යාව (කොටස 1)', grade: 11, subject: 'විද්‍යාව', medium: 'sinhala', coverBg: 'from-blue-600 to-indigo-800' },
+            { id: 2, title: '11 ශ්‍රේණිය - ගණිතය (කොටස 1)', grade: 11, subject: 'ගණිතය', medium: 'sinhala', coverBg: 'from-emerald-600 to-teal-800' },
+            { id: 3, title: '10 ශ්‍රේණිය - ඉතිහාසය', grade: 10, subject: 'ඉතිහාසය', medium: 'sinhala', coverBg: 'from-amber-600 to-orange-800' },
+            { id: 4, title: 'Grade 11 - Science Part 1', grade: 11, subject: 'විද්‍යාව', medium: 'english', coverBg: 'from-purple-600 to-pink-800' },
+            { id: 5, title: '5 ශ්‍රේණිය - පරිසරය ආශ්‍රිත ක්‍රියාකාරකම්', grade: 5, subject: 'පරිසරය', medium: 'sinhala', coverBg: 'from-lime-600 to-green-800' },
+            { id: 6, title: '13 ශ්‍රේණිය - සංයුක්ත ගණිතය', grade: 13, subject: 'ගණිතය', medium: 'sinhala', coverBg: 'from-cyan-600 to-blue-800' },
+            { id: 7, title: '11 ශ්‍රේණිය - සිංහල භාෂාව', grade: 11, subject: 'සිංහල', medium: 'sinhala', coverBg: 'from-red-600 to-rose-800' },
+            { id: 8, title: 'Grade 10 - Mathematics', grade: 10, subject: 'ගණිතය', medium: 'english', coverBg: 'from-indigo-600 to-blue-900' },
+            { id: 9, title: '11 ශ්‍රේණිය - බුද්ධ ධර්මය', grade: 11, subject: 'ආගම', medium: 'sinhala', coverBg: 'from-amber-500 to-yellow-700' },
+            { id: 10, title: '12 ශ්‍රේණිය - ICT (තොරතුරු තාක්ෂණය)', grade: 12, subject: 'ICT', medium: 'sinhala', coverBg: 'from-violet-600 to-purple-900' },
+            { id: 11, title: '6 ශ්‍රේණිය - විද්‍යාව', grade: 6, subject: 'විද්‍යාව', medium: 'sinhala', coverBg: 'from-blue-500 to-cyan-700' },
+            { id: 12, title: '9 ශ්‍රේණිය - ගණිතය', grade: 9, subject: 'ගණිතය', medium: 'sinhala', coverBg: 'from-emerald-500 to-teal-700' },
+        ];
+
+        const quizDataStore = {
+            g5: {
+                title: '5 ශ්‍රේණිය ශිෂ්‍යත්වය - MCQ පුහුණුව',
+                timer: 300,
+                questions: [
+                    {
+                        q: 'පහත සඳහන් දේවලින් සූර්යයාට වඩාත්ම ආසන්නයෙන් පිහිටි ග්‍රහලෝකය කුමක්ද?',
+                        options: ['සෙනසුරු', 'බුධ', 'අඟහරු', 'සිකුරු'],
+                        answer: 1,
+                        explanation: 'සූර්යයාට වඩාත්ම ආසන්නම ග්‍රහලෝකය වන්නේ බුධ ග්‍රහයායි.'
+                    },
+                    {
+                        q: 'ශ්‍රී ලංකාවේ උසම ජලපතනය කුමක්ද?',
+                        options: ['දියලුම', 'දුන්හිඳ', 'බඹරකන්ද', 'බෝපත් ඇල්ල'],
+                        answer: 2,
+                        explanation: 'මීටර් 263 ක උසකින් යුත් බඹරකන්ද ඇල්ල ශ්‍රී ලංකාවේ උසම ජලපතනය වේ.'
+                    },
+                    {
+                        q: '"සිංහල" භාෂාවේ ප්‍රධාන ස්වර ගණන කීයද?',
+                        options: ['12', '18', '14', '16'],
+                        answer: 1,
+                        explanation: 'සිංහල හෝඩියේ ප්‍රධාන ස්වර 18ක් අඩංගු වේ.'
+                    },
+                    {
+                        q: '350 g ප්‍රමාණයක් 1 kg කිරීමට තව කොපමණ ග්‍රෑම් ප්‍රමාණයක් එකතු කළ යුතුද?',
+                        options: ['500 g', '650 g', '750 g', '550 g'],
+                        answer: 1,
+                        explanation: '1 kg = 1000 g වේ. එබැවින් 1000 g - 350 g = 650 g.'
+                    },
+                    {
+                        q: 'ශ්‍රී ලංකාවේ ජාතික වෘක්ෂය කුමක්ද?',
+                        options: ['නා ගස', 'මහෝගනි', 'තේක්ක', 'අඹ ගස'],
+                        answer: 0,
+                        explanation: 'ශ්‍රී ලංකාවේ ජාතික වෘක්ෂය වන්නේ නා ගසයි.'
+                    }
+                ]
+            },
+            ol_science: {
+                title: 'O/L විද්‍යාව (Science) - MCQ',
+                timer: 480,
+                questions: [
+                    {
+                        q: 'ශාක සෛලයක ප්ලාස්ම පටලයෙන් ඇතුළත පිහිටි ජෙලි වැනි ද්‍රව්‍යය කුමක්ද?',
+                        options: ['න්‍යෂ්ටිය', 'සෛල ප්ලාස්මය', 'රයිබෙසෝම', 'මයිටොකොන්ඩ්‍රියා'],
+                        answer: 1,
+                        explanation: 'සෛල ප්ලාස්මය යනු සෛල පටලයට ඇතුළතින් පිහිටි ජෙලි වැනි මාධ්‍යයයි.'
+                    },
+                    {
+                        q: 'ආම්ලික ද්‍රාවණයක pH අගය විය හැක්කේ පහත සඳහන් කුමක්ද?',
+                        options: ['7', '9', '4', '12'],
+                        answer: 2,
+                        explanation: 'pH අගය 7ට අඩු ද්‍රාවණ ආම්ලික වේ.'
+                    },
+                    {
+                        q: 'මිනිසාගේ සාමාන්‍ය ශරීර උෂ්ණත්වය සෙල්සියස් අංශක කොපමණද?',
+                        options: ['37 °C', '35 °C', '40 °C', '32 °C'],
+                        answer: 0,
+                        explanation: 'නිරෝගී මිනිස් සිරුරේ සාමාන්‍ය උෂ්ණත්වය 37 °C (98.6 °F) පමණ වේ.'
+                    },
+                    {
+                        q: 'නියුට්‍රෝන සොයා ගන්නා ලද්දේ කුමන විද්‍යාඥයා විසින්ද?',
+                        options: ['ජේ.ජේ. තොම්සන්', 'අර්නස්ට් රුදර්ෆෝඩ්', 'ජේම්ස් චැඩ්වික්', 'ජෝන් ඩෝල්ටන්'],
+                        answer: 2,
+                        explanation: '1932 දී ජේම්ස් චැඩ්වික් විසින් නියුට්‍රෝනය සොයා ගන්නා ලදී.'
+                    },
+                    {
+                        q: 'ශාක ප්‍රභාසංස්ලේෂණයේදී පිටකරන වායුව කුමක්ද?',
+                        options: ['කාබන්ඩයොක්සයිඩ්', 'නයිට්‍රජන්', 'හයිඩ්‍රජන්', 'ඔක්සිජන්'],
+                        answer: 3,
+                        explanation: 'ප්‍රභාසංස්ලේෂණයේ ඵලයක් ලෙස ඔක්සිජන් වායුව පිටකරයි.'
+                    }
+                ]
+            },
+            al_ict: {
+                title: 'A/L ICT - MCQ',
+                timer: 600,
+                questions: [
+                    {
+                        q: 'පහත සඳහන් දේවලින් අස්ථිර (Volatile) මතකය කුමක්ද?',
+                        options: ['ROM', 'Hard Disk', 'RAM', 'Flash Drive'],
+                        answer: 2,
+                        explanation: 'RAM යනු විදුලිය විසන්ධි වූ විට දත්ත මැකී යන අස්ථිර (Volatile) මතකයකි.'
+                    },
+                    {
+                        q: 'දශම 10 හි ද්විමය (Binary) අගය කුමක්ද?',
+                        options: ['1010', '1001', '1100', '1111'],
+                        answer: 0,
+                        explanation: '10 හි ද්විමය අගය 1010₂ වේ.'
+                    },
+                    {
+                        q: 'HTML හි ප්‍රධාන ශීර්ෂය (Main Heading) සඳහා භාවිතා කරන ටැගය කුමක්ද?',
+                        options: ['<h6>', '<head>', '<h1>', '<header>'],
+                        answer: 2,
+                        explanation: '<h1> ටැගය මගින් විශාලතම ශීර්ෂය දක්වනු ලැබේ.'
+                    },
+                    {
+                        q: 'TCP/IP ආකෘතියේ ස්තර (Layers) ගණන කීයද?',
+                        options: ['7', '4', '5', '3'],
+                        answer: 1,
+                        explanation: 'TCP/IP ආකෘතියේ ස්තර 4ක් ඇත (Application, Transport, Internet, Network Access).'
+                    },
+                    {
+                        q: 'පහත ඒවායින් Database Management System (DBMS) එකක් නොවන්නේ කුමක්ද?',
+                        options: ['MySQL', 'Oracle', 'Python', 'MS Access'],
+                        answer: 2,
+                        explanation: 'Python යනු Programming Language එකකි, DBMS එකක් නොවේ.'
+                    }
+                ]
+            }
+        };
+
+        /* ================= APP STATE ================= */
+        let activeTab = 'home';
+        let currentMedium = 'sinhala';
+        let selectedPaperCategory = 'ALL';
+        let selectedGradeFilter = null;
+        let activeQuiz = null;
+        let activeQuizState = {
+            currentQIdx: 0,
+            userAnswers: [],
+            timerInterval: null,
+            timeLeft: 0
+        };
+
+        /* ================= INIT & SETUP ================= */
+        window.onload = function() {
+            renderGradePills();
+            renderHomeContent();
+            renderPapersGrid();
+            renderTextbooksGrid();
+            renderSubjectFilters();
+            renderTextbookGradeFilters();
+        };
+
+        /* ================= TAB NAVIGATION ================= */
+        function switchTab(tabId) {
+            activeTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-indigo-400', 'bg-indigo-500/10');
+                btn.classList.add('text-slate-300');
+            });
+            const activeNavBtn = document.getElementById(`nav-${tabId}`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.remove('text-slate-300');
+                activeNavBtn.classList.add('text-indigo-400', 'bg-indigo-500/10');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        /* ================= RENDER FUNCTIONS ================= */
+        function renderGradePills() {
+            const container = document.getElementById('gradePillsContainer');
+            let html = `<button onclick="filterByGrade(null)" class="px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-indigo-600 text-white shadow-sm">සියලුම ශ්‍රේණි</button>`;
+            for (let i = 1; i <= 13; i++) {
+                html += `
+                    <button onclick="filterByGrade(${i})" class="grade-pill-${i} px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap bg-slate-900 border border-slate-800 text-slate-300 hover:text-white hover:border-indigo-500 transition-all">
+                        ${i} ශ්‍රේණිය
+                    </button>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        function renderHomeContent() {
+            // Render Featured Papers (First 6)
+            const homePapersGrid = document.getElementById('homePapersGrid');
+            const featuredPapers = samplePapers.slice(0, 6);
+            homePapersGrid.innerHTML = featuredPapers.map(p => createPaperCardHTML(p)).join('');
+
+            // Render Featured Textbooks
+            const homeTextbooksGrid = document.getElementById('homeTextbooksGrid');
+            const featuredBooks = sampleTextbooks.slice(0, 6);
+            homeTextbooksGrid.innerHTML = featuredBooks.map(b => createTextbookCardHTML(b)).join('');
+        }
+
+        function renderPapersGrid() {
+            const grid = document.getElementById('allPapersGrid');
+            let filtered = samplePapers;
+
+            if (selectedPaperCategory !== 'ALL') {
+                filtered = filtered.filter(p => p.category === selectedPaperCategory);
+            }
+            if (selectedGradeFilter) {
+                filtered = filtered.filter(p => p.grade === selectedGradeFilter);
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">ප්‍රශ්න පත්‍ර හමුවූයේ නැත.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => createPaperCardHTML(p)).join('');
+        }
+
+        function renderTextbooksGrid() {
+            const grid = document.getElementById('allTextbooksGrid');
+            let filtered = sampleTextbooks.filter(b => b.medium === currentMedium);
+
+            if (selectedGradeFilter) {
+                filtered = filtered.filter(b => b.grade === selectedGradeFilter);
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-500">පෙළපොත් හමුවූයේ නැත.</div>`;
+                return;
+            }
+
+            grid.innerHTML = filtered.map(b => createTextbookCardHTML(b)).join('');
+        }
+
+        function renderSubjectFilters() {
+            const subjects = ['සියල්ල', 'ගණිතය', 'විද්‍යාව', 'සිංහල', 'ඉංග්‍රීසි', 'ඉතිහාසය', 'ICT'];
+            const container = document.getElementById('subjectFilterBar');
+            container.innerHTML = subjects.map((s, idx) => `
+                <button onclick="filterBySubject('${s}')" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap ${idx === 0 ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-white'} transition-all">
+                    ${s}
+                </button>
+            `).join('');
+        }
+
+        function renderTextbookGradeFilters() {
+            const container = document.getElementById('textbookGradeFilterBar');
+            let html = `<button onclick="filterByGrade(null)" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">සියලු ශ්‍රේණි</button>`;
+            for(let i=1; i<=13; i++) {
+                html += `
+                    <button onclick="filterByGrade(${i})" class="px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap bg-slate-900 border border-slate-800 text-slate-400 hover:text-white">
+                        ${i} ශ්‍රේණිය
+                    </button>
+                `;
+            }
+            container.innerHTML = html;
+        }
+
+        /* ================= HTML TEMPLATE GENERATORS ================= */
+        function createPaperCardHTML(paper) {
+            return `
+                <div class="p-5 rounded-2xl border border-slate-800 bg-slate-900/60 hover:bg-slate-900 transition-all hover:border-indigo-500/50 flex flex-col justify-between group">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2.5 py-0.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[11px] font-bold">
+                                ${paper.grade} ශ්‍රේණිය
+                            </span>
+                            <span class="text-xs text-slate-500 font-medium"><i class="fa-regular fa-calendar"></i> ${paper.year}</span>
+                        </div>
+                        <h3 class="font-bold text-white group-hover:text-indigo-300 transition-colors leading-snug">
+                            ${paper.title}
+                        </h3>
+                    </div>
+
+                    <div class="pt-4 mt-4 border-t border-slate-800/80 flex items-center justify-between gap-2">
+                        <button onclick="openPdfModal('${paper.title}')" class="flex-1 py-2 rounded-xl bg-indigo-600/10 hover:bg-indigo-600 text-indigo-400 hover:text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-eye"></i> බලන්න
+                        </button>
+                        ${paper.hasMarking ? `
+                            <button onclick="openPdfModal('${paper.title} - Marking Scheme')" class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition-all" title="Marking Scheme">
+                                <i class="fa-solid fa-check-double text-emerald-400"></i> ලකුණු පටිපාටිය
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        function createTextbookCardHTML(book) {
+            return `
+                <div onclick="openPdfModal('${book.title}')" class="cursor-pointer group flex flex-col rounded-2xl border border-slate-800 bg-slate-900 overflow-hidden hover:border-indigo-500/50 transition-all">
+                    <!-- Book Cover Mockup -->
+                    <div class="h-36 sm:h-44 bg-gradient-to-br ${book.coverBg} p-4 flex flex-col justify-between relative">
+                        <div class="text-[10px] uppercase tracking-wider text-white/80 font-bold">අධ්‍යාපන දෙපාර්තමේන්තුව</div>
+                        <div>
+                            <span class="text-xs px-2 py-0.5 rounded bg-black/40 text-white font-semibold backdrop-blur-sm">${book.grade} ශ්‍රේණිය</span>
+                            <h4 class="text-sm font-extrabold text-white mt-1 line-clamp-2 leading-tight">${book.title}</h4>
+                        </div>
+                    </div>
+                    <div class="p-3 text-center bg-slate-950">
+                        <span class="text-xs font-semibold text-slate-400 group-hover:text-indigo-400 transition-colors">
+                            <i class="fa-solid fa-book-open"></i> කියවන්න
+                        </span>
+                    </div>
+                </div>
+            `;
+        }
+
+        /* ================= FILTER LOGIC ================= */
+        function filterGradeCategory(cat) {
+            if (cat === 'primary') filterByGrade(5);
+            else if (cat === 'junior') filterByGrade(8);
+            else if (cat === 'ol') filterByGrade(11);
+            else if (cat === 'al') filterByGrade(13);
+            switchTab('papers');
+        }
+
+        function filterByGrade(grade) {
+            selectedGradeFilter = grade;
+            showToast(grade ? `${grade} ශ්‍රේණිය තෝරාගන්නා ලදී` : 'සියලුම ශ්‍රේණි පෙන්වයි');
+            renderPapersGrid();
+            renderTextbooksGrid();
+        }
+
+        function filterPapersCategory(cat) {
+            selectedPaperCategory = cat;
+            document.querySelectorAll('.paper-cat-pill').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
+            });
+            event.target.classList.remove('bg-slate-900', 'border', 'border-slate-800', 'text-slate-300');
+            event.target.classList.add('bg-indigo-600', 'text-white');
+            renderPapersGrid();
+        }
+
+        function filterMedium(med) {
+            currentMedium = med;
+            document.querySelectorAll('.medium-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('text-slate-400');
+            });
+            const selectedBtn = document.getElementById(`btn-med-${med}`);
+            selectedBtn.classList.remove('text-slate-400');
+            selectedBtn.classList.add('bg-indigo-600', 'text-white');
+            renderTextbooksGrid();
+        }
+
+        function filterBySubject(sub) {
+            if (sub === 'සියල්ල') {
+                renderPapersGrid();
+                return;
+            }
+            const filtered = samplePapers.filter(p => p.subject === sub);
+            const grid = document.getElementById('allPapersGrid');
+            grid.innerHTML = filtered.map(p => createPaperCardHTML(p)).join('');
+        }
+
+        function handleGlobalSearch() {
+            const query = event.target.value.toLowerCase().trim();
+            if(!query) {
+                renderPapersGrid();
+                return;
+            }
+            const filtered = samplePapers.filter(p => 
+                p.title.toLowerCase().includes(query) || 
+                p.subject.toLowerCase().includes(query)
+            );
+            const grid = document.getElementById('allPapersGrid');
+            grid.innerHTML = filtered.length ? filtered.map(p => createPaperCardHTML(p)).join('') : `<div class="col-span-full text-center py-12 text-slate-500">ප්‍රතිඵල හමුවූයේ නැත.</div>`;
+        }
+
+        /* ================= MCQ QUIZ ENGINE ================= */
+        function startQuiz(quizKey) {
+            activeQuiz = quizDataStore[quizKey];
+            activeQuizState.currentQIdx = 0;
+            activeQuizState.userAnswers = [];
+            activeQuizState.timeLeft = activeQuiz.timer;
+
+            document.getElementById('quizSelectionScreen').classList.add('hidden');
+            document.getElementById('quizResultBox').classList.add('hidden');
+            document.getElementById('activeQuizBox').classList.remove('hidden');
+
+            document.getElementById('quizTitle').innerText = activeQuiz.title;
+
+            startQuizTimer();
+            renderCurrentQuestion();
+        }
+
+        function renderCurrentQuestion() {
+            const qData = activeQuiz.questions[activeQuizState.currentQIdx];
+            const totalQ = activeQuiz.questions.length;
+
+            document.getElementById('quizQuestionNum').innerText = `ප්‍රශ්න අංක ${activeQuizState.currentQIdx + 1} / ${totalQ}`;
+            document.getElementById('quizProgressBar').style.width = `${((activeQuizState.currentQIdx + 1) / totalQ) * 100}%`;
+            document.getElementById('quizQuestionText').innerText = qData.q;
+
+            const optionsContainer = document.getElementById('quizOptionsContainer');
+            optionsContainer.innerHTML = qData.options.map((opt, idx) => `
+                <button onclick="selectQuizOption(${idx})" class="quiz-opt-btn w-full p-4 rounded-xl border border-slate-800 bg-slate-950 hover:bg-slate-800/80 text-left text-sm text-slate-200 transition-all flex items-center justify-between">
+                    <span>${idx + 1}. ${opt}</span>
+                    <i class="fa-regular fa-circle text-slate-600 opt-check"></i>
+                </button>
+            `).join('');
+
+            document.getElementById('nextQuestionBtn').disabled = true;
+        }
+
+        function selectQuizOption(optIdx) {
+            activeQuizState.userAnswers[activeQuizState.currentQIdx] = optIdx;
+
+            const buttons = document.querySelectorAll('.quiz-opt-btn');
+            buttons.forEach((btn, idx) => {
+                if (idx === optIdx) {
+                    btn.classList.add('border-indigo-500', 'bg-indigo-500/10', 'text-white');
+                    btn.querySelector('.opt-check').className = 'fa-solid fa-circle-check text-indigo-400';
+                } else {
+                    btn.classList.remove('border-indigo-500', 'bg-indigo-500/10', 'text-white');
+                    btn.querySelector('.opt-check').className = 'fa-regular fa-circle text-slate-600';
+                }
+            });
+
+            document.getElementById('nextQuestionBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            if (activeQuizState.currentQIdx < activeQuiz.questions.length - 1) {
+                activeQuizState.currentQIdx++;
+                renderCurrentQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function startQuizTimer() {
+            clearInterval(activeQuizState.timerInterval);
+            activeQuizState.timerInterval = setInterval(() => {
+                activeQuizState.timeLeft--;
+                const mins = Math.floor(activeQuizState.timeLeft / 60);
+                const secs = activeQuizState.timeLeft % 60;
+                document.getElementById('quizTimer').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                if (activeQuizState.timeLeft <= 0) {
+                    clearInterval(activeQuizState.timerInterval);
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function finishQuiz() {
+            clearInterval(activeQuizState.timerInterval);
+            document.getElementById('activeQuizBox').classList.add('hidden');
+            document.getElementById('quizResultBox').classList.remove('hidden');
+
+            let score = 0;
+            const total = activeQuiz.questions.length;
+
+            const reviewContainer = document.getElementById('quizReviewContainer');
+            reviewContainer.innerHTML = '';
+
+            activeQuiz.questions.forEach((q, idx) => {
+                const uAns = activeQuizState.userAnswers[idx];
+                const isCorrect = uAns === q.answer;
+                if (isCorrect) score++;
+
+                reviewContainer.innerHTML += `
+                    <div class="p-4 rounded-xl border ${isCorrect ? 'border-emerald-500/30 bg-emerald-950/20' : 'border-rose-500/30 bg-rose-950/20'} space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold">
+                            <span class="${isCorrect ? 'text-emerald-400' : 'text-rose-400'}">${idx + 1}. ${isCorrect ? 'නිවැරදියි' : 'වැරදියි'}</span>
+                        </div>
+                        <p class="text-sm font-semibold text-white">${q.q}</p>
+                        <p class="text-xs text-slate-300">ඔබේ පිළිතුර: <span class="font-bold">${uAns !== undefined ? q.options[uAns] : 'පිළිතුරු දී නැත'}</span></p>
+                        ${!isCorrect ? `<p class="text-xs text-emerald-400">නිවැරදි පිළිතුර: <span class="font-bold">${q.options[q.answer]}</span></p>` : ''}
+                        <p class="text-xs text-slate-400 italic pt-1 border-t border-slate-800">පැහැදිලි කිරීම: ${q.explanation}</p>
+                    </div>
+                `;
+            });
+
+            document.getElementById('finalScoreText').innerText = `${score} / ${total}`;
+            document.getElementById('scorePercentage').innerText = `ලකුණු ප්‍රතිශතය: ${Math.round((score / total) * 100)}%`;
+        }
+
+        function exitQuiz() {
+            clearInterval(activeQuizState.timerInterval);
+            resetQuizScreen();
+        }
+
+        function resetQuizScreen() {
+            document.getElementById('quizSelectionScreen').classList.remove('hidden');
+            document.getElementById('activeQuizBox').classList.add('hidden');
+            document.getElementById('quizResultBox').classList.add('hidden');
+        }
+
+        /* ================= MODAL SIMULATION LOGIC ================= */
+        function openPdfModal(title) {
+            document.getElementById('pdfModalTitle').innerText = title;
+            document.getElementById('pdfModal').classList.remove('hidden');
+        }
+
+        function closePdfModal() {
+            document.getElementById('pdfModal').classList.add('hidden');
+        }
+
+        function downloadSimulatedPDF() {
+            showToast('PDF ගොනුව භාගත වීම ආරම්භ විය!');
+        }
+
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.remove('hidden');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.add('hidden');
+        }
+
+        function handleResourceUpload(e) {
+            e.preventDefault();
+            const title = document.getElementById('upTitle').value;
+            const grade = parseInt(document.getElementById('upGrade').value);
+            const subject = document.getElementById('upSubject').value;
+
+            // Add to simulated array
+            samplePapers.unshift({
+                id: Date.now(),
+                title: title,
+                category: grade === 11 ? 'OL' : (grade === 13 ? 'AL' : 'G5'),
+                grade: grade,
+                subject: subject,
+                year: 2026,
+                hasMarking: false
+            });
+
+            closeUploadModal();
+            showToast('ප්‍රශ්න පත්‍රය සාර්ථකව පද්ධතියට එකතු කරන ලදී!');
+            renderPapersGrid();
+        }
+
+        /* ================= TOAST NOTIFICATION SYSTEM ================= */
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'px-4 py-3 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-xl border border-indigo-400/30 flex items-center gap-2 animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
